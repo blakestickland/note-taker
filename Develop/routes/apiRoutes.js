@@ -32,9 +32,10 @@ module.exports = (app) => {
     })
   });
 
+  // Below code handles when an individual note is clicked in the left-hand column and becomes the active note in right-hand column.
   app.get('/api/notes/:title', (req, res) => {
     fs.readFile(`${__dirname}/../db/db.json`, (err, data) => {
-
+      
   });
 });
 
@@ -52,8 +53,10 @@ module.exports = (app) => {
     // It will do this by using a console log after note is submitted.
     // req.body is available since we're using the body parsing middleware
       let newNote = req.body;
-        dbData.push(newNote);
-        console.log(dbData);
+      let newId = uuidv4();
+      newNote.id = newId;
+      dbData.push(newNote);
+      console.log(dbData);
       let data = JSON.stringify(dbData);
 
       fs.writeFile(`${__dirname}/../db/db.json`, data, (err) => {
@@ -64,13 +67,19 @@ module.exports = (app) => {
     });
   });
 
-    // TODO add update facility by passing in the unique id number such as below
-    app.post('/api/notes/:id', (req, res) => {
+  
+  // API DELETE Requests
+  // Below code handles when a user clicks on a trashcan (ie. delete icon) associated with an individual note in the left-hand column.
+  app.delete('/api/notes/:id', (req, res) => {
+      let selectedNote = req.body;
+      let noteID = selectedNote.id;
+      
+  });
+  
+  // TODO add update facility by passing in the unique id number such as below
+  app.post('/api/notes/:id', (req, res) => {
 
-    });
-
-    app.delete('/api/notes/')
-
+  });
   // I added this below code so you could clear out the table while working with the functionality.
   // Don"t worry about it!
 
