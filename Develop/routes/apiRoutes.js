@@ -4,6 +4,8 @@
 
 const dbData = require('../db/db');
 const fs = require ('fs');
+const { v4: uuidv4 } = require('uuid');
+// uuidv4();          // ⇨ '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed'    this is the univesally unique id --> run it on each db entry
 
 
 // ROUTING
@@ -18,33 +20,23 @@ module.exports = (app) => {
   app.get('/api/notes', (req, res) => {
     fs.readFile(`${__dirname}/../db/db.json`, (err, data) => {
       if (err) {
-        console.log(dbData);
         res.writeHead(500, { 'Content-Type': 'text/html' });
         res.end(
           '<html><head><title>Oops</title></head><body><h1>Oops, there was an error</h1></html>'
           );
       } else {
-        console.log("we have read to the file 'db'")
+        console.log("we have read the file 'db'")
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(data);
       }
     })
   });
-  app.get('/api/notes', (req, res) => {
+
+  app.get('/api/notes/:title', (req, res) => {
     fs.readFile(`${__dirname}/../db/db.json`, (err, data) => {
-      if (err) {
-        console.log(dbData);
-        res.writeHead(500, { 'Content-Type': 'text/html' });
-        res.end(
-          '<html><head><title>Oops</title></head><body><h1>Oops, there was an error</h1></html>'
-          );
-      } else {
-        console.log("we have read to the file 'db'")
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(data);
-      }
-    })
+
   });
+});
 
 
   // API POST Requests
@@ -59,31 +51,25 @@ module.exports = (app) => {
     // Note the code here. Our "server" will respond to requests and let users know the note has been added to the left-hand column.
     // It will do this by using a console log after note is submitted.
     // req.body is available since we're using the body parsing middleware
-    // fs.writeFile(`${__dirname}${dbData}`, (err, data) => {
-    //   if (err) {
-      fs.writeFile(`${__dirname}/../db/db.json`, (err, data) => {
-        if (err) {
-          console.log(dbData);
-          res.writeHead(500, { 'Content-Type': 'text/html' });
-          res.end(
-            '<html><head><title>Oops</title></head><body><h1>Oops, there was an error trying to write file</h1></html>'
-            );
-        } else {
-          console.log("we have written to the file 'db'")
-          res.writeHead(200, { 'Content-Type': 'application/json' });
-          res.end(data);
-        }
-      })
+      let newNote = req.body;
+        dbData.push(newNote);
+        console.log(dbData);
+      let data = JSON.stringify(dbData);
 
-    dbData.push(req.body);
-    res.json(true);
-    console.log("note has been saved to the database");
+      fs.writeFile(`${__dirname}/../db/db.json`, data, (err) => {
+        if (err) throw err;
+        
+        res.json(true);
+        console.log('dbData written to file');
+    });
   });
 
     // TODO add update facility by passing in the unique id number such as below
     app.post('/api/notes/:id', (req, res) => {
 
     });
+
+    app.delete('/api/notes/')
 
   // I added this below code so you could clear out the table while working with the functionality.
   // Don"t worry about it!
