@@ -5,7 +5,6 @@
 const dbData = require("../db/db");
 const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
-// uuidv4();          // ⇨ '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed'    this is the univesally unique id --> run it on each db entry
 
 // ROUTING
 
@@ -40,13 +39,10 @@ module.exports = (app) => {
   // Below code handles when a user submits a form and thus submits data to the server.
   // In each of the below cases, when a user submits form data (a JSON object)
   // ...the JSON is pushed to the appropriate JavaScript array
-  // (ex. User fills out a reservation request... this data is then sent to the server...
-  // Then the server saves the data to the tableData array)
   // ---------------------------------------------------------------------------
 
   app.post("/api/notes", (req, res) => {
     // Note the code here. Our "server" will respond to requests and let users know the note has been added to the left-hand column.
-    // It will do this by using a console log after note is submitted.
     // req.body is available since we're using the body parsing middleware
     let newNote = req.body;
     let newId = uuidv4();
@@ -59,7 +55,6 @@ module.exports = (app) => {
       if (err) throw err;
 
       res.json(true);
-      console.log("dbData written to file");
     });
   });
 
@@ -74,8 +69,6 @@ module.exports = (app) => {
         );
       } else {
         let clickedID = req.params.id;
-        console.log(clickedID);
-        console.log(JSON.parse(data));
         // get index of note (ie. object insdie the array) to remove.
         var remainingNote = JSON.parse(data).filter(function (item) {
           return item.id !== clickedID;
@@ -84,29 +77,18 @@ module.exports = (app) => {
           if (err) throw err;
 
           res.json(true);
-          console.log("dbData written to file");
         });
-
-        // remove object
-        // let splicedData = JSON.parse(data).splice(removeNote, 1);
-        // removed object
-        // console.log(`This is the removed object:`, splicedData);
-        // remaining array
-        // console.log(`This is the remaining array:`, data);
       }
-      // console.log(`This is the data after object removed from array: ${data}`);
     });
   });
-
-  // TODO add update facility by passing in the unique id number such as below
 
   // I added this below code so you could clear out the table while working with the functionality.
   // Don"t worry about it!
 
-  app.post("/api/clear", (req, res) => {
-    // Empty out the arrays of data
-    dbData.length = 0;
+  // app.post("/api/clear", (req, res) => {
+  //   // Empty out the arrays of data
+  //   dbData.length = 0;
 
-    res.json({ ok: true });
-  });
+  //   res.json({ ok: true });
+  // });
 };
