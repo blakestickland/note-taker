@@ -70,16 +70,43 @@ module.exports = (app) => {
   
   // API DELETE Requests
   // Below code handles when a user clicks on a trashcan (ie. delete icon) associated with an individual note in the left-hand column.
-  app.delete('/api/notes/:id', (req, res) => {
-      let selectedNote = req.body;
-      let noteID = selectedNote.id;
-      
-  });
+  app.delete('/api/notes/:id',  (req, res)  => {
+
+      fs.readFile(`${__dirname}/../db/db.json`, async (err, data) => {
+        if (err) {
+          res.writeHead(500, { 'Content-Type': 'text/html' });
+          res.end(
+            '<html><head><title>Oops</title></head><body><h1>Oops, there was an error</h1></html>'
+            );
+        } else {
+          let clickedID = req.params.id;
+          console.log(clickedID);
+         
+          // get index of note (ie. object insdie the array) to remove.
+          var removeNote = dbData.map(function(item) { return item.id; }).indexOf(clickedID);
+
+          // remove object
+          let splicedData = dbData.splice(removeNote, 1);
+          // removed object
+          console.log(`This is the removed object:\n${splicedData}`);
+          // remaining array
+          console.log(`This is the remaining array: \n ${dbData}`);
+        }
+      });
+      let data = JSON.stringify(dbData);
+      console.log (`This is the data after object removed from array: ${data}`);
+
+      fs.writeFile(`${__dirname}/../db/db4.json`, data, (err) => {
+        if (err) throw err;
+        
+        res.json(true);
+        console.log('dbData written to file');
+    });
+    });
+  
   
   // TODO add update facility by passing in the unique id number such as below
-  app.post('/api/notes/:id', (req, res) => {
-
-  });
+  
   // I added this below code so you could clear out the table while working with the functionality.
   // Don"t worry about it!
 
